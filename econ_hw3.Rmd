@@ -19,3 +19,17 @@ hw3_data <- read.csv(here("data", "HW3_data.csv")) %>%
   clean_names()
 ```
 
+```{r}
+low.income.lm <-lm(price_cents ~ q_low_kwh, data = hw3_data)
+slope.low <- low.income.lm$coefficient[2]
+intercept.low <- low.income.lm$coefficient[1]
+vector_range <- seq(0, 160000, length.out = 19)
+hw3_data$low_demand = slope.low*(vector_range) + intercept.low
+
+ggplot(data = hw3_data, aes(y = price_cents, x = low_demand)) +
+  geom_line()+
+  labs(x = "kwH",
+       y = "Price of kwH",
+       title = "Demend for low income")
+```
+
