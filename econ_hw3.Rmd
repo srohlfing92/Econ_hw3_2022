@@ -1,0 +1,21 @@
+---
+title: "Econ_hw_3"
+author: "Sarah Rohlfing"
+date: "5/2/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(here)
+
+```
+
+
+```{r}
+hw3_data <- read.csv(here("data", "HW3_data.csv")) %>% 
+  clean_names()
+```
+
