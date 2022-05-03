@@ -31,5 +31,26 @@ ggplot(data = hw3_data, aes(y = price_cents, x = low_demand)) +
   labs(x = "kwH",
        y = "Price of kwH",
        title = "Demend for low income")
+
+```
+```{r}
+high.income.lm <-lm(price_cents ~ q_high_kwh, data = hw3_data)
+slope.high <- high.income.lm$coefficient[2]
+intercept.high <- high.income.lm$coefficient[1]
+hw3_data$high_demand = slope.high*(vector_range) + intercept.high
+
+ggplot(data = hw3_data, aes(y = price_cents, x = high_demand)) +
+  geom_line()+
+  labs(x = "kwH",
+       y = "Price of kwH",
+       title = "Demend for high income")
+```
+
+```{r}
+agg.income.lm <-lm()
+slope.high <- high.income.lm$coefficient[2]
+intercept.high <- high.income.lm$coefficient[1]
+hw3_data$high_demand = slope.high*(vector_range) + intercept.high
+
 ```
 
