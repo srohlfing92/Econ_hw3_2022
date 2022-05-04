@@ -20,6 +20,23 @@ hw3_data <- read.csv(here("data", "HW3_data.csv")) %>%
 ```
 
 ```{r}
+elec_longer <- pivot_longer(data =hw3_data,
+                            cols = q_low_kwh:q_high_kwh,
+                            names_to = "income_group",
+                            values_to = "quantity_kwh")
+```
+
+```{r}
+ggplot(data = elec_longer, aes(y = price_cents, x = quantity_kwh)) +
+  geom_point() +
+  labs(x = "kwH",
+       y = "Price of kwH",
+       title = "Demend for low income")
+
+```
+
+
+```{r}
 low.income.lm <-lm(price_cents ~ q_low_kwh, data = hw3_data)
 slope.low <- low.income.lm$coefficient[2]
 intercept.low <- low.income.lm$coefficient[1]
@@ -27,7 +44,7 @@ vector_range <- seq(0, 160000, length.out = 19)
 hw3_data$low_demand = slope.low*(vector_range) + intercept.low
 
 ggplot(data = hw3_data, aes(y = price_cents, x = low_demand)) +
-  geom_line()+
+  geom_line() +
   labs(x = "kwH",
        y = "Price of kwH",
        title = "Demend for low income")
@@ -47,10 +64,31 @@ ggplot(data = hw3_data, aes(y = price_cents, x = high_demand)) +
 ```
 
 ```{r}
-agg.income.lm <-lm()
-slope.high <- high.income.lm$coefficient[2]
-intercept.high <- high.income.lm$coefficient[1]
-hw3_data$high_demand = slope.high*(vector_range) + intercept.high
+demand <- function(p, model){
+  q <- (p - model$coefficients[1])/model$coefficients[2]
+  q <- ifelse(q<0, 0, q)
+  return(q)
+}
+```
+
+```{r}
+#demand_ex <- demand(p=2, model = high.income.lm) #(example: to find what demand function will output at price = 2)
+```
+
+
+```{r}
+demand_agg <- function(p){
+  q <- demand(p, low.income.lm) + demand(p, high.income.lm)
+  return(q)
+}
+
+# create new column of points for aggregate model
+
+
+```
+
+
+```{r}
 
 ```
 
