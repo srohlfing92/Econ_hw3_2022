@@ -87,8 +87,9 @@ demand_agg <- function(p){
 }
 
 # create new column of points for aggregate model
-q_agg <- seq(0,70,3.7)
-hw3_data$demand_curve <- demand_agg(q_agg)
+q_agg <- seq(0,65,3.61) # in intervals of 3.7 to have 19 points
+
+hw3_data$demand_curve <- demand_agg(q_agg) #added a column into the hw3_data using the sequence created
 
 
 ggplot(data = hw3_data, aes(y = price_cents, x = demand_curve)) +
