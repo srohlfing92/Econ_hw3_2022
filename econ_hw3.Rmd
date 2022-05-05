@@ -27,11 +27,14 @@ elec_longer <- pivot_longer(data =hw3_data,
 ```
 
 ```{r}
+
 ggplot(data = elec_longer, aes(y = price_cents, x = quantity_kwh)) +
   geom_point() +
+  geom_smooth(method =lm, se = FALSE) +
+  facet_wrap( ~income_group)+
   labs(x = "kwH",
        y = "Price of kwH",
-       title = "Demend for low income")
+       title = "Demend for low and high income households")
 
 ```
 
@@ -79,12 +82,20 @@ demand <- function(p, model){
 ```{r}
 demand_agg <- function(p){
   q <- demand(p, low.income.lm) + demand(p, high.income.lm)
+  q <- ifelse(q<0, 0, q)
   return(q)
 }
 
 # create new column of points for aggregate model
+q_agg <- seq(0,70,3.7)
+hw3_data$demand_curve <- demand_agg(q_agg)
 
 
+ggplot(data = hw3_data, aes(y = price_cents, x = demand_curve)) +
+  geom_line()+
+  labs(x = "kwH",
+       y = "Price of kwH",
+       title = "Aggregate Demend")
 ```
 
 
