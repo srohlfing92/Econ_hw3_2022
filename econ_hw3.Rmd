@@ -111,13 +111,16 @@ p_star_before_tax <- 10 #10 cents is p star
 # find slope for supply curve
 mpc_slope = p_star_before_tax/q_star_agg # slope of supply curve = 1.86e-5
 
+hw3_data$q_kwh_sum <- hw3_data$q_low_kwh + hw3_data$q_high_kwh
+
+df$supply_lm <- mpc_slope * df$price
+
+
+
 #df$mpc_prices = mpc_slope*(Qagg) 
 
-#ggplot(data = df, aes(y = price, x = mpc_prices)) +
-  #geom_point()+
-  #labs(x = "kwH",
-   #    y = "Price of kwH",
-   #    title = "Supply Curve")
+ggplot(data = df, aes(y = price, x = supply_lm)) +
+  geom_point()
 
 ```
 
@@ -142,5 +145,17 @@ CS_agg <- function(p){
 
 agg_consumer_surplus <- CS_agg(p=10) # = $52,987.22
 ```
+
+```{r}
+PS <- function(p, model){
+  q <- demand(p, model)
+  cs <- 0.5*(model$coefficients[1] - p)*q
+  return(cs)}
+
+PS_agg <- function(p){
+  cs <- CS(p,low.income.lm) + CS(p,high.income.lm)
+  return(cs)}
+```
+
 
 
