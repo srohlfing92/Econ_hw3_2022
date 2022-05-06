@@ -37,6 +37,10 @@ ggplot(data = elec_longer, aes(y = price_cents, x = quantity_kwh)) +
        title = "Demend for low and high income households")
 
 ```
+```{r}
+#hw3_data %>% 
+#hw3_data$q_agg_sum = q_low_kwh + q_high_kwh
+```
 
 
 ```{r}
@@ -72,35 +76,71 @@ demand <- function(p, model){
   q <- ifelse(q<0, 0, q)
   return(q)
 }
+
+
 ```
 
 ```{r}
-#demand_ex <- demand(p=2, model = high.income.lm) #(example: to find what demand function will output at price = 2)
+demand_ex <- demand(p=10, model = low.income.lm) #(example: to find what demand function will output at price = 2)
 ```
 
 
 ```{r}
 demand_agg <- function(p){
   q <- demand(p, low.income.lm) + demand(p, high.income.lm)
-  q <- ifelse(q<0, 0, q)
   return(q)
 }
+price = seq(0, 30, length.out = 100)
+Qagg <- map(price, demand_agg) %>% unlist()
+df<- tibble(Qagg = Qagg, price = price)
 
-# create new column of points for aggregate model
-q_agg <- seq(0,65,3.61) # in intervals of 3.7 to have 19 points
-
-hw3_data$demand_curve <- demand_agg(q_agg) #added a column into the hw3_data using the sequence created
-
-
-ggplot(data = hw3_data, aes(y = price_cents, x = demand_curve)) +
+ggplot(data = df, aes(y = price, x = Qagg)) +
   geom_line()+
   labs(x = "kwH",
        y = "Price of kwH",
-       title = "Aggregate Demend")
+       title = "Aggregate Demand")
 ```
 
 
 ```{r}
+q_star_agg <- demand_agg(p=10) # q_star_agg = 536,719 kwH
+p_star_before_tax <- 10 #10 cents is p star
+```
+
+```{r}
+# find slope for supply curve
+mpc_slope = p_star_before_tax/q_star_agg # slope of supply curve = 1.86e-5
+
+#df$mpc_prices = mpc_slope*(Qagg) 
+
+#ggplot(data = df, aes(y = price, x = mpc_prices)) +
+  #geom_point()+
+  #labs(x = "kwH",
+   #    y = "Price of kwH",
+   #    title = "Supply Curve")
 
 ```
+
+```{r}
+# 1ton/$51 * 1lb/.0005 tons = $.0255/lb *.85 lb/kwh = $0.01912/kwh
+# $ 0.10 + $0.01912 = $0.12/kwh (marginal external cost/kwh)
+
+mec_per_kwh <- 0.12 # <- marginal external cost
+```
+
+```{r}
+CS <- function(p, model){
+  q <- demand(p, model)
+  cs <- 0.5*(model$coefficients[1] - p)*q
+  return(cs)}
+
+# CS_ex <- CS(p = 10, model = low.income.lm) to test low income consumer surplus
+
+CS_agg <- function(p){
+  cs <- CS(p,low.income.lm) + CS(p,high.income.lm)
+  return(cs)}
+
+agg_consumer_surplus <- CS_agg(p=10) # = $52,987.22
+```
+
 
