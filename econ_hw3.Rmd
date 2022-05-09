@@ -113,8 +113,8 @@ mpc_slope = p_star_before_tax/q_star_agg # slope of supply curve = 1.86e-5
 
 hw3_data$q_kwh_sum <- hw3_data$q_low_kwh + hw3_data$q_high_kwh
 
-df$supply_lm <- mpc_slope * df$price
 
+df$supply_lm <- mpc_slope * df$price
 
 
 #df$mpc_prices = mpc_slope*(Qagg) 
@@ -125,10 +125,10 @@ ggplot(data = df, aes(y = price, x = supply_lm)) +
 ```
 
 ```{r}
-# 1ton/$51 * 1lb/.0005 tons = $.0255/lb *.85 lb/kwh = $0.01912/kwh
-# $ 0.10 + $0.01912 = $0.12/kwh (marginal external cost/kwh)
+# $51/1 metric ton * 0.000453592 metric tons/1 lb = $.0231/lb *.85 lb/kwh = $0.01966/kwh
+# $ 0.10 + $0.01966 = $0.13/kwh (marginal external cost/kwh)
 
-mec_per_kwh <- 0.12 # <- marginal external cost
+mec_per_kwh <- 0.13 # <- marginal external cost
 ```
 
 ```{r}
