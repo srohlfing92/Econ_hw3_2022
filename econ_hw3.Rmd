@@ -81,7 +81,7 @@ demand <- function(p, model){
 ```
 
 ```{r}
-demand_ex <- demand(p=10, model = low.income.lm) #(example: to find what demand function will output at price = 2)
+demand_ex <- demand(p= .10, model = low.income.lm) #(example: to find what demand function will output at price = 2)
 ```
 
 
@@ -103,18 +103,20 @@ ggplot(data = df, aes(y = price, x = Qagg)) +
 
 
 ```{r}
-q_star_agg <- demand_agg(p=10) # q_star_agg = 536,719 kwH
-p_star_before_tax <- 10 #10 cents is p star
+q_star_agg <- demand_agg(p=.10) # q_star_agg = 816,884 kwH
+p_star_before_tax <- .10 #10 cents is p star
 ```
 
 ```{r}
 # find slope for supply curve
-mpc_slope = p_star_before_tax/q_star_agg # slope of supply curve = 1.86e-5
+mpc_slope = p_star_before_tax/q_star_agg # slope of supply curve = 1.22e-07
+
+df$q_random <- seq(0, 80000, length.out = 100)
 
 hw3_data$q_kwh_sum <- hw3_data$q_low_kwh + hw3_data$q_high_kwh
 
 
-df$supply_lm <- mpc_slope * df$price
+df$supply_lm <- mpc_slope * df$q_random
 
 
 #df$mpc_prices = mpc_slope*(Qagg) 
@@ -128,7 +130,7 @@ ggplot(data = df, aes(y = price, x = supply_lm)) +
 # $51/1 metric ton * 0.000453592 metric tons/1 lb = $.0231/lb *.85 lb/kwh = $0.01966/kwh
 # $ 0.10 + $0.01966 = $0.13/kwh (marginal external cost/kwh)
 
-mec_per_kwh <- 0.13 # <- marginal external cost
+mec_per_kwh <- .13 # <- marginal external cost in dollars
 ```
 
 ```{r}
@@ -137,25 +139,44 @@ CS <- function(p, model){
   cs <- 0.5*(model$coefficients[1] - p)*q
   return(cs)}
 
-# CS_ex <- CS(p = 10, model = low.income.lm) to test low income consumer surplus
+# CS_ex <- CS(p = .10, model = low.income.lm) to test low income consumer surplus
 
 CS_agg <- function(p){
   cs <- CS(p,low.income.lm) + CS(p,high.income.lm)
   return(cs)}
 
-agg_consumer_surplus <- CS_agg(p=10) # = $52,987.22
+agg_consumer_surplus <- CS_agg(p=.10) # = 1.2e7
+# convert to dollars
+agg_cs_dollars <- agg_consumer_surplus/100 # = $119,991
 ```
 
 ```{r}
-PS <- function(p, model){
-  q <- demand(p, model)
-  cs <- 0.5*(model$coefficients[1] - p)*q
-  return(cs)}
+PS <- function(p){
+  ps <- 0.5*(p/mpc_slope)
+  return(ps)}
 
-PS_agg <- function(p){
-  cs <- CS(p,low.income.lm) + CS(p,high.income.lm)
-  return(cs)}
+PS_status_quo <- PS(p = .10) # = 408,442 cents producer surplus under status quo
+#convert to dollars
+PS_sq_dollars <- PS_status_quo/100 # = $4,084 
 ```
 
+```{r}
+# find environmental damage costs under status quo
 
+env_cost <- .02 # $0.01966 per kwh of env. damage
+total_env_cost_sq <- env_cost * q_star_agg # = $16,338 of env damage under status quo q_star of 816,884 kwh
+```
+
+```{r}
+# find consumer surplus for low income vs. high income
+low_cs_sq <- CS(p = .10, model = low.income.lm) # 2,457,278 with the status quo, convert to dollars
+low_cs_sq_dollars <- low_cs_sq/100 # = $24,573
+
+high_cs_sq <- CS(p = .10, model = high.income.lm) # 9541781 cents with status quo, convert to dollars
+high_cs_sq_dollars <- high_cs_sq/100 # = $95,418
+
+# High income has a much higher consumer surplus than low income. High income has a surplus of $70,845 higher than low income.
+
+
+```
 
