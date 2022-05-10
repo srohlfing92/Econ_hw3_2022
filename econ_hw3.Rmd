@@ -171,7 +171,7 @@ Supply_fun <- function(q){
 Supply_fun(q=500000) # about 10 cents, yay
 
 PS <- function(p){
-  ps <- 0.5*p*q_star_agg #might be wrong! had: .5 * p/mpc_slope
+  ps <- 0.5 * p * q_star_agg #might be wrong! had: .5 * p/mpc_slope
   return(ps)}
 
 PS_status_quo <- PS(p = 10) # = 2,683,597 cents producer surplus under status quo
@@ -183,7 +183,7 @@ PS_sq_dollars <- PS_status_quo/100 # = $26,836
 # find environmental damage costs under status quo
 
 env_cost <- 2 # $0.01966 per kwh of env. damage
-total_env_cost_sq <- env_cost * q_star_agg # = $1073439 of env damage under status quo q_star of 816,884 kwh
+total_env_cost_sq <- env_cost * q_star_agg # = $1073439 of env damage under status quo q_star of 536719 kwh
 env_dollars_total <- total_env_cost_sq/100 # = $10,734
 ```
 
@@ -201,32 +201,26 @@ high_cs_sq_dollars <- high_cs_sq/100 # = $44,875
 ```{r}
 # P = mQ + b 
 # P = b - t + mQ
-new_demand_w_tax <- function(p, scc){
-  q <- demand(p, low.income.lm) + demand(p, high.income.lm) - tax(scc)
-  return(q)}
+# low income bears all the burden
 
-ex1 <- new_demand_w_tax(p = 10, scc = 51)
+new_low_intercept <- function(scc)
+  {low_int <- low.income.lm$coefficients[1]- tax(scc)
+  return(low_int)}
+new_low_intercept(scc = 51) #= 21.404 is new y-intercept for the low income demand curve
 
- #q <- demand(p, low.income.lm) + demand(p, high.income.lm)
-
-#demand_agg <- function(p){
-  #q <- demand(p, low.income.lm) + demand(p, high.income.lm)
-  #return(q)}
-
-# demand <- function(p, model){
-  #q <- (p - model$coefficients[1])/model$coefficients[2]
-  #q <- ifelse(q<0, 0, q)
-  #return(q)}
-demand_flip <- function(q, model){
-  p <- model$coefficients[1] + model$coefficients[2]*q
-  return(p)
+low_demand_tax <- function(p, scc){
+  q <- (p - new_low_intercept(scc))/low.income.lm$coefficients[2]
+  return(q)
 }
 
-demand_agg_flip <- function(q){
-  p <- demand_flip(q, low.income.lm) + demand(q, high.income.lm)
-  return(p)
+# low_demand_tax(p = 10, scc = 51)
+
+demand_agg_tax <- function(p, scc){
+  q <- low_demand_tax(p, scc) + demand(p, high.income.lm)
+  return(q)
 }
-demand_agg_flip(q = 536718) #nope
+tax_51_q <- demand_agg_tax( p = 10, scc = 51) # = 518875 kwh is the q star with scc = to 51
+
 
 ```
 
