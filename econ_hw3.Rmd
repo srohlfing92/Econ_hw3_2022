@@ -131,10 +131,19 @@ ggplot(data = df, aes(y = price, x = supply_lm)) +
 
 ```{r}
 # $51/1 metric ton * 0.000453592 metric tons/1 lb = $.0231/lb *.85 lb/kwh = $0.01966/kwh
-# $ 0.10 + $0.01966 = $0.13/kwh (marginal external cost/kwh)
+# $ 0.10 + $0.01966 = $0.12/kwh (marginal external cost/kwh)
 
-mec_per_kwh <- 13 # <- marginal external cost in dollars
+tax <- function(scc){
+  t <- scc * .000453592 * 0.85 * 100
+  return(t)
+}
+
+tax(scc = 51)
+
+mec_per_kwh <- 12 # <- marginal external cost in dollars
 ```
+
+
 
 ```{r}
 CS <- function(p, model){
@@ -154,13 +163,20 @@ agg_cs_dollars <- agg_consumer_surplus/100 # = $52,987
 ```
 
 ```{r}
+Supply_fun <- function(q){
+  p <- q*mpc_slope
+  return(p)
+}
+
+Supply_fun(q=500000) # about 10 cents, yay
+
 PS <- function(p){
-  ps <- 0.5*(p/mpc_slope)
+  ps <- 0.5*p*q_star_agg #might be wrong! had: .5 * p/mpc_slope
   return(ps)}
 
-PS_status_quo <- PS(p = 10) # = 268,360 cents producer surplus under status quo
+PS_status_quo <- PS(p = 10) # = 2,683,597 cents producer surplus under status quo
 #convert to dollars
-PS_sq_dollars <- PS_status_quo/100 # = $2,684
+PS_sq_dollars <- PS_status_quo/100 # = $26,836
 ```
 
 ```{r}
@@ -180,6 +196,19 @@ high_cs_sq <- CS(p = 10, model = high.income.lm) # 4487479 cents with status quo
 high_cs_sq_dollars <- high_cs_sq/100 # = $44,875
 
 # High income has a much higher consumer surplus than low income. High income has a surplus of $36,763 higher than low income.
+```
+
+```{r}
+# P = mQ + b 
+# P = b - t + mQ
+new_demand_w_tax <- function(p, scc){
+  q <- demand(p, low.income.lm) + demand(p, high.income.lm) - tax(scc)
+  return(q)}
+
+ex1 <- new_demand_w_tax(p = 10, scc = 51)
+
+ #q <- demand(p, low.income.lm) + demand(p, high.income.lm)
+
 
 
 ```
