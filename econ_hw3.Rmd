@@ -209,7 +209,24 @@ ex1 <- new_demand_w_tax(p = 10, scc = 51)
 
  #q <- demand(p, low.income.lm) + demand(p, high.income.lm)
 
+#demand_agg <- function(p){
+  #q <- demand(p, low.income.lm) + demand(p, high.income.lm)
+  #return(q)}
 
+# demand <- function(p, model){
+  #q <- (p - model$coefficients[1])/model$coefficients[2]
+  #q <- ifelse(q<0, 0, q)
+  #return(q)}
+demand_flip <- function(q, model){
+  p <- model$coefficients[1] + model$coefficients[2]*q
+  return(p)
+}
+
+demand_agg_flip <- function(q){
+  p <- demand_flip(q, low.income.lm) + demand(q, high.income.lm)
+  return(p)
+}
+demand_agg_flip(q = 536718) #nope
 
 ```
 
