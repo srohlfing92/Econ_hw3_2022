@@ -17,9 +17,9 @@ library(here)
 ```{r}
 hw3_data <- read.csv(here("data", "HW3_data.csv")) %>% 
   clean_names() 
-  
 ```
 
+## Tidy data w/ pivot
 ```{r}
 elec_longer <- pivot_longer(data =hw3_data,
                             cols = q_low_kwh:q_high_kwh,
@@ -27,6 +27,7 @@ elec_longer <- pivot_longer(data =hw3_data,
                             values_to = "quantity_kwh")
 ```
 
+## Graph Price v. Income Group per kilowatt hour
 ```{r}
 
 ggplot(data = elec_longer, aes(y = price_cents, x = quantity_kwh)) +
@@ -35,18 +36,20 @@ ggplot(data = elec_longer, aes(y = price_cents, x = quantity_kwh)) +
   facet_wrap( ~income_group)+
   labs(x = "kwH",
        y = "Price of kwH",
-       title = "Demend for low and high income households")
+       title = "Demand for low and high income households")
 
 ```
+
 ```{r}
 #hw3_data %>% 
-#hw3_data$q_agg_sum = q_low_kwh + q_high_kwh
+#hw3_data$q_agg_sum = q_low_kwh + q_high_kwh ## did this not work?
 
 hw3_data$price_dollars <- hw3_data$price_cents/100
 ```
 
-
+##
 ```{r}
+## line equation for low income group
 low.income.lm <-lm(price_cents ~ q_low_kwh, data = hw3_data)
 slope.low <- low.income.lm$coefficient[2]
 intercept.low <- low.income.lm$coefficient[1]
@@ -60,7 +63,9 @@ ggplot(data = hw3_data, aes(y = price_cents, x = low_demand)) +
        title = "Demand for low income")
 
 ```
+
 ```{r}
+## line equation for high income group
 high.income.lm <-lm(price_cents ~ q_high_kwh, data = hw3_data)
 slope.high <- high.income.lm$coefficient[2]
 intercept.high <- high.income.lm$coefficient[1]
@@ -74,6 +79,7 @@ ggplot(data = hw3_data, aes(y = price_cents, x = high_demand)) +
 ```
 
 ```{r}
+## slope for the demand line
 demand <- function(p, model){
   q <- (p - model$coefficients[1])/model$coefficients[2]
   q <- ifelse(q<0, 0, q)
@@ -87,7 +93,7 @@ demand <- function(p, model){
 demand_ex <- demand(p= 10, model = low.income.lm) #(example: to find what demand function will output at price = 2)
 ```
 
-Demand aggregate curve: 
+## Demand aggregate curve: 
 ```{r}
 demand_agg <- function(p){
   q <- demand(p, low.income.lm) + demand(p, high.income.lm)
