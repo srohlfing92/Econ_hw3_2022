@@ -275,7 +275,7 @@ Find the Producer surplus with the added tax. need to go down from 10 by 2(the e
 ```{r}
 PS_tax <- (0.5* tax_51_q * 8)/100 # turning it into dollars
 
-PS_difference <- PS_no_tax - PS_tax # = a difference of $6,081
+PS_difference <- PS_sq_dollars - PS_tax # = a difference of $6,081
 ```
 
 Total environmental damage
@@ -296,8 +296,48 @@ Question 5: Now, assume that all revenue from the electricity tax will be redist
 (c) Electricity producers
 ```{r}
 # high = CS(function of tax and MEC) + pre tax rebate
-# high tax rebate = q_high/(q_high + q_low) * tax rev(chages with scc)
+# high tax rebate = q_high/(q_high + q_low) * tax rev(changes with scc)
 # low = CS + pre tax rebate - [MEC * q_tax_51]
 # low tax rebate = q_low/(q_high+q_low) * tax revenue
+
+high_income_proportion <- demand(model = high.income.lm, p = 10)/(demand(model = high.income.lm, p = 10) + demand(model = low.income.lm, p = 10)) # all this is under status quo = .774
+
+low_income_proportion <- demand(model = low.income.lm, p = 10)/(demand(model = high.income.lm, p = 10) + demand(model = low.income.lm, p = 10)) # = .226
+```
+
+
+```{r}
+high_welfare <- (CS_tax_high + high_income_proportion * Q_demand_agg_tax(p = 10, scc = 150))/100 # = $40,967
+```
+consumer surplus for high income at:
+$51: $40,967
+$75: $40,902
+$100:  $40,835
+$125: $40,767
+$150: $40,699
+
+```{r}
+low_welfare <- (CS_tax_low + low_income_proportion * Q_demand_agg_tax(p = 10, scc = 150))/100 # = 7,075
+```
+consumer surplus for low income at scc:
+$51: $7,075
+$75: $7,056
+$100: $7,036
+$125: $ 7,016
+$150: $ 6,997
+
+```{r}
+#Q_demand_agg_tax <- function(p, scc){
+  #q <- low_demand_tax(p, scc) + demand(p, high.income.lm)
+ # return(q)}
+
+PS_fun_w_tax <- function(p, scc){
+  ps <- (p * Q_demand_agg_tax(p, scc)) * 0.5
+  return(ps)
+}
+
+PS_51 <- PS_fun_w_tax(p = 8, scc = 51)/100 # = $23,019 this isn't right....i feel like it should be the same as the previous PS_tax
+
+
 ```
 
