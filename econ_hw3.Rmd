@@ -13,7 +13,7 @@ library(here)
 
 ```
 
-
+## Read in the data
 ```{r}
 hw3_data <- read.csv(here("data", "HW3_data.csv")) %>% 
   clean_names() 
