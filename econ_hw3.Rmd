@@ -268,8 +268,11 @@ Total tax rev
 tax_rev_51 <- (Q_demand_agg_tax(p = 10, scc = 51) * 4)/100 # = $20,755 of tax revenue (is this too high??? Sandy made it sound like it had to be 4 cents for the height of the tax revenue)
 ```
 
-
+#5 
 ```{r}
-
+# high = CS(function of tax and MEC) + pre tax rebate
+# high tax rebate = q_high/(q_high + q_low) * tax rev(chages with scc)
+# low = CS + pre tax rebate - [MEC * q_tax_51]
+# low tax rebate = q_low/(q_high+q_low) * tax revenue
 ```
 
