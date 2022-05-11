@@ -1,6 +1,6 @@
 ---
 title: "Econ_hw_3"
-author: "Sarah Rohlfing"
+author: "Sarah Rohlfing, Alessandra Puig-Santana"
 date: "5/2/2022"
 output: html_document
 ---
