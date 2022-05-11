@@ -221,6 +221,38 @@ demand_agg_tax <- function(p, scc){
 }
 tax_51_q <- demand_agg_tax( p = 10, scc = 51) # = 518875 kwh is the q star with scc = to 51
 
+# reduction in kwh consumption from 536719 - 518875
 
+536719-518875 # = 17844 kwh reduction with the new tax.
+```
+
+
+Find high income consumer surplus with the tax
+```{r}
+CS_tax_high <- CS(p = 12, model = high.income.lm) # = 3695177 cents
+# convert to dollars
+CS_tax_high_dollars <- CS_tax_high/100 # = $36952
+# Originally was $44875
+44875-36952 # = $7923 less in consumer surplus with the SCC = 51
+```
+
+
+```{r}
+CS_low_income <- function(p, scc, model){
+  q <- low_demand_tax(p, scc)
+  cs <- 0.5*(new_low_intercept(scc) - p)*q
+  return(cs)}
+
+CS_tax_low <- CS_low_income(p = 10, scc = 51, model = low.income.lm) # = 590186
+CS_tax_low_dollars <- CS_tax_low/100 #= $5902 in the new CS
+#The difference in consumer surplus 
+low_cs_sq_dollars - CS_tax_low_dollars # = $2210.57 less in consumer surplus
+
+```
+
+```{r}
+PS_tax <- (0.5* tax_51_q * 8)/100 # turning it into dollars
+
+PS_difference <- PS_no_tax - PS_tax # = a difference of $6,081
 ```
 
