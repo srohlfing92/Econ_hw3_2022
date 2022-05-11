@@ -87,7 +87,7 @@ demand <- function(p, model){
 demand_ex <- demand(p= 10, model = low.income.lm) #(example: to find what demand function will output at price = 2)
 ```
 
-
+Demand aggregate curve: 
 ```{r}
 demand_agg <- function(p){
   q <- demand(p, low.income.lm) + demand(p, high.income.lm)
@@ -129,6 +129,8 @@ ggplot(data = df, aes(y = price, x = supply_lm)) +
 
 ```
 
+Question 1: One kWh of electricity emits 0.85 pounds of CO2. Assuming that the interim SCC correctly reflects the total social cost of one metric ton of CO2, what is the marginal externality cost per kwH of electricity?
+
 ```{r}
 # $51/1 metric ton * 0.000453592 metric tons/1 lb = $.0231/lb *.85 lb/kwh = $0.01966/kwh
 # $ 0.10 + $0.01966 = $0.12/kwh (marginal external cost/kwh)
@@ -143,7 +145,7 @@ tax(scc = 51)
 mec_per_kwh <- 12 # <- marginal external cost in dollars
 ```
 
-
+Question 2: What is the aggregate monthly demand curve for electricity? What is the supply curve for electricity? What is the “benefit” to consumers under the status quo? What is the “benefit” to producers under the status quo? What is the environmental cost under the status quo?
 
 ```{r}
 CS <- function(p, model){
@@ -157,7 +159,7 @@ CS_agg <- function(p){
   cs <- CS(p,low.income.lm) + CS(p,high.income.lm)
   return(cs)}
 
-agg_consumer_surplus <- CS_agg(p=10) # = 5298722
+agg_consumer_surplus <- CS_agg(p=10) # = 5298722 cents
 # convert to dollars
 agg_cs_dollars <- agg_consumer_surplus/100 # = $52,987
 ```
@@ -188,7 +190,7 @@ env_cost_sq <- (env_cost * q_star_agg)/100 # = $10,734.39 of env damage under st
 
 ```{r}
 # find consumer surplus for low income vs. high income
-low_cs_sq <- CS(p = 10, model = low.income.lm) # 811243 with the status quo, convert to dollars
+low_cs_sq <- CS(p = 10, model = low.income.lm) # 811243 cents with the status quo, convert to dollars
 low_cs_sq_dollars <- low_cs_sq/100 # = $8,112
 
 high_cs_sq <- CS(p = 10, model = high.income.lm) # 4487479 cents with status quo, convert to dollars
@@ -197,6 +199,11 @@ high_cs_sq_dollars <- high_cs_sq/100 # = $44,875
 # High income has a much higher consumer surplus than low income. High income has a surplus of $36,763 higher than low income.
 ```
 
+Question 3: How is the current consumer benefit divided between “high” and “low” income consumers? 
+
+High income has a much higher consumer surplus than low income. High income has a surplus of $36,763 higher than low income.
+
+Question 4: Derive the optimal electricity tax (in cents per kWh) using the interim SCC. Noting that recent research has shown the poor face a disproportionate share of the impacts from climate change, assume that the climate externality is borne entirely by the “low” income group. What would be the effects of this tax on:
 ```{r}
 # P = mQ + b 
 # P = b - t + mQ
