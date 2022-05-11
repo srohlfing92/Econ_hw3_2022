@@ -346,3 +346,12 @@ $75: $18,143
 $100: $15,414
 $125: $12,770
 $150: $10,209
+
+
+6. Suppose the “high” income group has access to expensive home solar generation. This lowers
+the electricity demand curve for the “high” income group by half (vertically). Under this new
+demand:
+(a) What is total electricity consumption?
+(b) What is the total environmental externality?
+(c) What value of the electricity tax makes the total environmental damage the same as the
+damage when solar panels are available to the high income group?
