@@ -190,8 +190,8 @@ PS_sq_dollars <- PS_status_quo/100 # = $26,836
 ```{r}
 # find environmental damage costs under status quo
 
-env_cost <- 2 # $0.01966 per kwh of env. damage
-env_cost_sq <- (env_cost * q_star_agg)/100 # = $10,734.39 of env damage under status quo q_star of 536719 kwh
+env_cost <- tax(51) # $0.01966 per kwh of env. damage
+env_cost_sq <- (tax(51) * q_star_agg)/100 # = $10,734.39 of env damage under status quo q_star of 536719 kwh
 ```
 
 ```{r}
@@ -273,7 +273,7 @@ low_cs_sq_dollars - CS_tax_low_dollars # = $2210.57 less in consumer surplus
 
 Find the Producer surplus with the added tax. need to go down from 10 by 2(the environmental cost). This way the entire tax revenue will be 4 * the new q star
 ```{r}
-PS_tax <- (0.5* tax_51_q * 8)/100 # turning it into dollars
+PS_tax <- (0.5* tax_51_q * (10 - tax(51)))/100 # turning it into dollars
 
 PS_difference <- PS_sq_dollars - PS_tax # = a difference of $6,081
 ```
@@ -282,12 +282,12 @@ Total environmental damage
 ```{r}
 env_damage_w_tax <- (Q_demand_agg_tax(p = 10, scc = 51) * 2)/100 # = $10,377
 
-env_difference <- env_dollars_total - env_damage_w_tax # = $357 of env damage saved with the new tax
+env_difference <- env_cost_sq - env_damage_w_tax # = $176 of env damage saved with the new tax
 ```
 
 Total tax rev generated
 ```{r}
-tax_rev_51 <- (Q_demand_agg_tax(p = 10, scc = 51) * 4)/100 # = $20,755 of tax revenue (is this too high??? Sandy made it sound like it had to be 4 cents for the height of the tax revenue)
+tax_rev_51 <- (Q_demand_agg_tax(p = 10, scc = 51) * env_cost*2)/100 # = $20,405 of tax revenue (is this too high??? Sandy made it sound like it had to be 4 cents for the height of the tax revenue)
 ```
 
 Question 5: Now, assume that all revenue from the electricity tax will be redistributed to the consumers in proportion to their pre-tax consumption. For example, if 80% of the electricity was consumed by “high” income consumers, then they get 80% of the tax revenue. Additionally, consider the fact that current scientific evidence suggests the true SCC may be much higher than $51. For a range of SCC values ($51, $75, $100, $125, and $150 per metric ton of CO2), calculate the effects of an SCC-based electricity tax on:
@@ -332,12 +332,17 @@ $150: $ 6,997
  # return(q)}
 
 PS_fun_w_tax <- function(p, scc){
-  ps <- (p * Q_demand_agg_tax(p, scc)) * 0.5
+  ps <- ((10 - tax(scc))* Q_demand_agg_tax(p, scc)) * 0.5
   return(ps)
 }
 
-PS_51 <- PS_fun_w_tax(p = 8, scc = 51)/100 # = $23,019 this isn't right....i feel like it should be the same as the previous PS_tax
-
-
+PS_51 <- PS_fun_w_tax(p = 10, scc = 51)/100 # = $23,019 this isn't right....i feel like it should be the same as the previous PS_tax
+ 
+PS_fun_w_tax(p = 10, scc = 150)/100
 ```
-
+producer surplus at scc:
+$51: $23,019
+$75: $18,143
+$100: $15,414
+$125: $12,770
+$150: $10,209
