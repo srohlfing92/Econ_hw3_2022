@@ -47,9 +47,8 @@ ggplot(data = elec_longer, aes(y = price_cents, x = quantity_kwh)) +
 hw3_data$price_dollars <- hw3_data$price_cents/100
 ```
 
-##
+### Linear model for low income group
 ```{r}
-## line equation for low income group
 low.income.lm <-lm(price_cents ~ q_low_kwh, data = hw3_data)
 slope.low <- low.income.lm$coefficient[2]
 intercept.low <- low.income.lm$coefficient[1]
@@ -64,8 +63,8 @@ ggplot(data = hw3_data, aes(y = price_cents, x = low_demand)) +
 
 ```
 
+### Linear model for high income group
 ```{r}
-## line equation for high income group
 high.income.lm <-lm(price_cents ~ q_high_kwh, data = hw3_data)
 slope.high <- high.income.lm$coefficient[2]
 intercept.high <- high.income.lm$coefficient[1]
@@ -93,7 +92,7 @@ demand <- function(p, model){
 demand_ex <- demand(p= 10, model = low.income.lm) #(example: to find what demand function will output at price = 2)
 ```
 
-## Demand aggregate curve: 
+### Demand aggregate curve 
 ```{r}
 demand_agg <- function(p){
   q <- demand(p, low.income.lm) + demand(p, high.income.lm)
@@ -150,6 +149,8 @@ tax(scc = 51)
 
 mec_per_kwh <- 12 # <- marginal external cost in dollars
 ```
+
+The marginal externality cost per kwH of electricity is $`r round(tax(scc = 51), 4)`. 
 
 Question 2: What is the aggregate monthly demand curve for electricity? What is the supply curve for electricity? What is the “benefit” to consumers under the status quo? What is the “benefit” to producers under the status quo? What is the environmental cost under the status quo?
 
