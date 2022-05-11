@@ -273,11 +273,11 @@ low_cs_sq_dollars - CS_tax_low # = $2210 less in consumer surplus
 ```
 
 
-Find the Producer surplus with the added tax. need to go down from 10 by 2(the environmental cost). This way the entire tax revenue will be 4 * the new q star
+Find the Producer surplus with the added tax. need to go down from 10 to where the new SO Q star intercects the supply curve. 
 ```{r}
 P_star_51 <- Supply_fun(q = Q_tax_51) # = 9.67 (where the new q_star intercepts the supply curve)
 
-PS_tax <- (0.5* tax_51_q * P_star_51)/100 # $25,081 turning it into dollars
+PS_tax <- (0.5* Q_demand_agg_tax(p = 10, scc = 51) * P_star_51)/100 # $25,081 turning it into dollars
 
 PS_difference <- PS_sq_dollars - PS_tax # = a difference of $1,755
 ```
@@ -291,7 +291,7 @@ env_difference <- env_cost_sq - env_damage_w_tax # = $351 of env damage saved wi
 
 Total tax rev generated
 ```{r}
-tax_rev_51 <- (Q_demand_agg_tax(p = 10, scc = 51)) * ((env_cost+10) - Supply_fun(q = Q_tax_51))/100 # = $11,928 of tax revenue (is this too high??? Sandy made it sound like it had to be 4 cents for the height of the tax revenue)
+tax_rev_51 <- (Q_demand_agg_tax(p = 10, scc = 51)) * ((env_cost+10) - Supply_fun(q = Q_tax_51))/100 # = $11,928 of tax revenue 
 ```
 
 Question 5: Now, assume that all revenue from the electricity tax will be redistributed to the consumers in proportion to their pre-tax consumption. For example, if 80% of the electricity was consumed by “high” income consumers, then they get 80% of the tax revenue. Additionally, consider the fact that current scientific evidence suggests the true SCC may be much higher than $51. For a range of SCC values ($51, $75, $100, $125, and $150 per metric ton of CO2), calculate the effects of an SCC-based electricity tax on:
@@ -309,9 +309,19 @@ high_income_proportion <- demand(model = high.income.lm, p = 10)/(demand(model =
 low_income_proportion <- demand(model = low.income.lm, p = 10)/(demand(model = high.income.lm, p = 10) + demand(model = low.income.lm, p = 10)) # = .226
 ```
 
+```{r}
+tax_rev_75 <-(Q_demand_agg_tax(p = 10, scc = 75)) * ((env_cost+10) - Supply_fun(q = Q_tax_51))/100 #change q = to new q
+
+```
+
 
 ```{r}
-high_welfare <- (CS_tax_high + high_income_proportion * Q_demand_agg_tax(p = 10, scc = 150))/100 # = $40,967
+high_welfare <- ((CS(p=10, model = high.income.lm)) +
+                   high_income_proportion * 
+                   (Q_demand_agg_tax(p = 10, scc = 51))* #this and down is tax rev
+                   ((env_cost + 10) -
+                      Supply_fun(q = Q_demand_agg_tax(p=10, scc=51))))/100
+                                                                                    # = $40,967
 ```
 consumer surplus for high income at:
 $51: $40,967
