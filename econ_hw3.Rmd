@@ -355,3 +355,7 @@ demand:
 (b) What is the total environmental externality?
 (c) What value of the electricity tax makes the total environmental damage the same as the
 damage when solar panels are available to the high income group?
+```{r}
+# c: p = a not written out ignore
+```
+
