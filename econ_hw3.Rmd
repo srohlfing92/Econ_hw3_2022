@@ -362,23 +362,17 @@ PS_fun_w_tax <- function(p, scc, q){
   ps <- (Supply_fun(q)* Q_demand_agg_tax(p, scc)) * 0.5
   return(ps)
 }
-$$$$$$$$$
-PS_fun_w_tax(p = 10, scc = 51, q = Q_demand_agg_tax(p = 10, scc = 51))/100
 
-PS_tax <- (0.5* Q_demand_agg_tax(p = 10, scc = 51) * Supply_fun(q = Q_demand_agg_tax( p = 10, scc = 51)))/100
-
-
-
-PS_51 <- PS_fun_w_tax(p = 10, scc = 51)/100 # = $23,019 this isn't right....i feel like it should be the same as the previous PS_tax
+PS_tax_51 <- (0.5* Q_demand_agg_tax(p = 10, scc = 51) * Supply_fun(q = Q_demand_agg_tax( p = 10, scc = 51)))/100
  
-PS_fun_w_tax(p = 10, scc = 150)/100
+PS_fun_w_tax(p = 10, scc = 150, q = Q_demand_agg_tax(p = 10, scc = 150))/100
 ```
 producer surplus at scc:
-$51: $23,019
-$75: $18,143
-$100: $15,414
-$125: $12,770
-$150: $10,209
+$51: $25,081
+$75: $24,276
+$100: $23,451
+$125: $22,640
+$150: $21,844
 
 
 6. Suppose the “high” income group has access to expensive home solar generation. This lowers
