@@ -263,4 +263,13 @@ env_damage_w_tax <- (Q_demand_agg_tax(p = 10, scc = 51) * 2)/100 # = $10,377
 env_difference <- env_dollars_total - env_damage_w_tax # = $357 of env damage saved with the new tax
 ```
 
+Total tax rev
+```{r}
+tax_rev_51 <- (Q_demand_agg_tax(p = 10, scc = 51) * 4)/100 # = $20,755 of tax revenue (is this too high??? Sandy made it sound like it had to be 4 cents for the height of the tax revenue)
+```
+
+
+```{r}
+
+```
 
