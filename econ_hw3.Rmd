@@ -183,8 +183,7 @@ PS_sq_dollars <- PS_status_quo/100 # = $26,836
 # find environmental damage costs under status quo
 
 env_cost <- 2 # $0.01966 per kwh of env. damage
-total_env_cost_sq <- env_cost * q_star_agg # = $1073439 of env damage under status quo q_star of 536719 kwh
-env_dollars_total <- total_env_cost_sq/100 # = $10,734
+env_cost_sq <- (env_cost * q_star_agg)/100 # = $10,734.39 of env damage under status quo q_star of 536719 kwh
 ```
 
 ```{r}
@@ -215,11 +214,11 @@ low_demand_tax <- function(p, scc){
 
 # low_demand_tax(p = 10, scc = 51)
 
-demand_agg_tax <- function(p, scc){
+Q_demand_agg_tax <- function(p, scc){
   q <- low_demand_tax(p, scc) + demand(p, high.income.lm)
   return(q)
 }
-tax_51_q <- demand_agg_tax( p = 10, scc = 51) # = 518875 kwh is the q star with scc = to 51
+tax_51_q <- Q_demand_agg_tax( p = 10, scc = 51) # = 518875 kwh is the q star with scc = to 51
 
 # reduction in kwh consumption from 536719 - 518875
 
@@ -250,9 +249,18 @@ low_cs_sq_dollars - CS_tax_low_dollars # = $2210.57 less in consumer surplus
 
 ```
 
+
+Find the Pruducer surplus with the added tax. need to go down from 10 by 2(the environmental cost). This way the entire tax revenue will be 4 * the new q star
 ```{r}
 PS_tax <- (0.5* tax_51_q * 8)/100 # turning it into dollars
 
 PS_difference <- PS_no_tax - PS_tax # = a difference of $6,081
 ```
+
+```{r}
+env_damage_w_tax <- (Q_demand_agg_tax(p = 10, scc = 51) * 2)/100 # = $10,377
+
+env_difference <- env_dollars_total - env_damage_w_tax # = $357 of env damage saved with the new tax
+```
+
 
