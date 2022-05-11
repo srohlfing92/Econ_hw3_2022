@@ -178,6 +178,7 @@ Supply_fun <- function(q){
 
 Supply_fun(q=500000) # about 10 cents, yay
 
+
 PS <- function(p){
   ps <- 0.5 * p * q_star_agg #might be wrong! had: .5 * p/mpc_slope
   return(ps)}
@@ -239,7 +240,9 @@ Q_demand_agg_tax <- function(p, scc){
   q <- low_demand_tax(p, scc) + demand(p, high.income.lm)
   return(q)
 }
-tax_51_q <- Q_demand_agg_tax( p = 10, scc = 51) # = 518875 kwh is the q star with scc = to 51
+Q_tax_51 <- Q_demand_agg_tax( p = 10, scc = 51) # = 518875 kwh is the q star with scc = to 51
+
+P_star_demand <- tax(51)+10 #= 11.966
 
 # reduction in kwh consumption from 536719 - 518875
 
@@ -249,45 +252,46 @@ tax_51_q <- Q_demand_agg_tax( p = 10, scc = 51) # = 518875 kwh is the q star wit
 
 Find high income consumer surplus with the tax
 ```{r}
-CS_tax_high <- CS(p = 12, model = high.income.lm) # = 3695177 cents
-# convert to dollars
-CS_tax_high_dollars <- CS_tax_high/100 # = $36952
+CS_tax_high <- CS(p = P_star_demand, model = high.income.lm)/100 # = $37,079
 # Originally was $44875
 44875-36952 # = $7923 less in consumer surplus with the SCC = 51
 ```
 
 
 ```{r}
-CS_low_income <- function(p, scc, model){
-  q <- low_demand_tax(p, scc)
-  cs <- 0.5*(new_low_intercept(scc) - p)*q
-  return(cs)}
+#CS_low_income <- function(p, scc, model){
+  #q <- low_demand_tax(p, scc)
+  #cs <- 0.5*(new_low_intercept(scc) - p)*q
+  #return(cs)}
 
-CS_tax_low <- CS_low_income(p = 10, scc = 51, model = low.income.lm) # = 590186
-CS_tax_low_dollars <- CS_tax_low/100 #= $5902 in the new CS
+#CS_tax_low <- CS_low_income(p = P_star_demand, scc = 51, model = low.income.lm) # = 590186
+CS_tax_low <- CS(p = P_star_demand, model = low.income.lm)/100 # need to use the original low income demand curve! their demand hasn't changed, we just created a new demand curve to find a new aggregate to get the new cost. 
+# = $5,902 CS for low income with new tax
 #The difference in consumer surplus 
-low_cs_sq_dollars - CS_tax_low_dollars # = $2210.57 less in consumer surplus
+low_cs_sq_dollars - CS_tax_low # = $2210 less in consumer surplus
 
 ```
 
 
 Find the Producer surplus with the added tax. need to go down from 10 by 2(the environmental cost). This way the entire tax revenue will be 4 * the new q star
 ```{r}
-PS_tax <- (0.5* tax_51_q * (10 - tax(51)))/100 # turning it into dollars
+P_star_51 <- Supply_fun(q = Q_tax_51) # = 9.67 (where the new q_star intercepts the supply curve)
 
-PS_difference <- PS_sq_dollars - PS_tax # = a difference of $6,081
+PS_tax <- (0.5* tax_51_q * P_star_51)/100 # $25,081 turning it into dollars
+
+PS_difference <- PS_sq_dollars - PS_tax # = a difference of $1,755
 ```
 
 Total environmental damage
 ```{r}
-env_damage_w_tax <- (Q_demand_agg_tax(p = 10, scc = 51) * 2)/100 # = $10,377
+env_damage_w_tax <- (Q_demand_agg_tax(p = 10, scc = 51) * tax(51))/100 # = $10,203
 
-env_difference <- env_cost_sq - env_damage_w_tax # = $176 of env damage saved with the new tax
+env_difference <- env_cost_sq - env_damage_w_tax # = $351 of env damage saved with the new tax
 ```
 
 Total tax rev generated
 ```{r}
-tax_rev_51 <- (Q_demand_agg_tax(p = 10, scc = 51) * env_cost*2)/100 # = $20,405 of tax revenue (is this too high??? Sandy made it sound like it had to be 4 cents for the height of the tax revenue)
+tax_rev_51 <- (Q_demand_agg_tax(p = 10, scc = 51)) * ((env_cost+10) - Supply_fun(q = Q_tax_51))/100 # = $11,928 of tax revenue (is this too high??? Sandy made it sound like it had to be 4 cents for the height of the tax revenue)
 ```
 
 Question 5: Now, assume that all revenue from the electricity tax will be redistributed to the consumers in proportion to their pre-tax consumption. For example, if 80% of the electricity was consumed by “high” income consumers, then they get 80% of the tax revenue. Additionally, consider the fact that current scientific evidence suggests the true SCC may be much higher than $51. For a range of SCC values ($51, $75, $100, $125, and $150 per metric ton of CO2), calculate the effects of an SCC-based electricity tax on:
@@ -356,6 +360,6 @@ demand:
 (c) What value of the electricity tax makes the total environmental damage the same as the
 damage when solar panels are available to the high income group?
 ```{r}
-# c: p = a not written out ignore
+# c: p = 
 ```
 
