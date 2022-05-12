@@ -180,7 +180,7 @@ Supply_fun(q=500000) # about 10 cents, yay
 
 
 PS <- function(p){
-  ps <- 0.5 * p * q_star_agg #might be wrong! had: .5 * p/mpc_slope
+  ps <- 0.5 * p * q_star_agg 
   return(ps)}
 
 PS_status_quo <- PS(p = 10) # = 2,683,597 cents producer surplus under status quo
@@ -383,6 +383,26 @@ demand:
 (c) What value of the electricity tax makes the total environmental damage the same as the
 damage when solar panels are available to the high income group?
 ```{r}
-# c: p = 
+#new demand curve for high income with solar
+demand_h_solar <- function(q, model){
+  p <- (q*model$coefficients[2]) + .5*model$coefficients[1]
+  p <- ifelse(q<0, 0, q)
+  return(q)
+}
+
+high_demand_solar <- function(p){
+  q <- (p - .5*model$coefficient[1])/high.income.lm$coefficients[2]
+  return(q)
+}
+
+Q_demand_agg_solar <- function(p){
+  q <- high_demand_tax(p) + demand(p, low.income.lm)
+  return(q)
+}
+
+# use the supply function to input the new q_star and find the new supply intercept p value
+Supply_fun(q = q_star_solar)
+
+
 ```
 
