@@ -394,6 +394,7 @@ high_demand_solar <- function(p){
   q <- (p - .5*model$coefficient[1])/high.income.lm$coefficients[2]
   return(q)
 }
+###confused!!!
 
 Q_demand_agg_solar <- function(p){
   q <- high_demand_tax(p) + demand(p, low.income.lm)
