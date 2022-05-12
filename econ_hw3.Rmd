@@ -180,7 +180,7 @@ Supply_fun(q=500000) # about 10 cents, yay
 
 
 PS <- function(p){
-  ps <- 0.5 * p * q_star_agg #might be wrong! had: .5 * p/mpc_slope
+  ps <- 0.5 * p * q_star_agg 
   return(ps)}
 
 PS_status_quo <- PS(p = 10) # = 2,683,597 cents producer surplus under status quo
@@ -277,7 +277,7 @@ Find the Producer surplus with the added tax. need to go down from 10 to where t
 ```{r}
 P_star_51 <- Supply_fun(q = Q_tax_51) # = 9.67 (where the new q_star intercepts the supply curve)
 
-PS_tax <- (0.5* Q_demand_agg_tax(p = 10, scc = 51) * P_star_51)/100 # $25,081 turning it into dollars
+PS_tax <- (0.5* Q_demand_agg_tax(p = 10, scc = 51) * Supply_fun(q = Q_tax_51))/100 # $25,081 turning it into dollars
 
 PS_difference <- PS_sq_dollars - PS_tax # = a difference of $1,755
 ```
@@ -321,23 +321,30 @@ tax_rev_150 <- (Q_demand_agg_tax(p = 10, scc = 150)) * ((tax(150)+10) - Supply_f
 
 
 ```{r}
-high_welfare_51 <- (CS(p=tax(150)+10, model = high.income.lm) +
+high_welfare <- (CS(p=tax(150)+10, model = high.income.lm) +
                    (high_income_proportion * 
-                   tax_rev_150) - 
-                   (tax(150)*Q_demand_agg_tax(p = 10, scc = 150)))/100
+                   tax_rev_150))/100
           
    
    # = $26,968
 ```
 consumer surplus for high income at:
-$51: $26,968
-$75: $19,040
-$100:  $11,082
-$125: $3,545
-$150: $-3684
+$51: $37,171
+$75: $33,801
+$100:  $30,426
+$125: $27,304
+$150: $24,321
 
 ```{r}
-low_welfare <- (CS_tax_low + low_income_proportion * Q_demand_agg_tax(p = 10, scc = 150))/100 # = 7,075
+# old code....wrong but kept incase some of it is right 
+#low_welfare <- (CS_tax_low + low_income_proportion * #Q_demand_agg_tax(p = 10, scc = 150))/100 # = 7,075
+# THIS IS WRONG I JUST KNOW IT!! EVERYTHING IS NEGATIVE NOW!!!
+low_welfare <- (CS(p=tax(51)+10, model = low.income.lm) +
+                   (low_income_proportion * 
+                   tax_rev_51) - 
+                   (tax(51)*Q_demand_agg_tax(p = 10, scc = 51)))/100
+#scc of 51 = -4274
+
 ```
 consumer surplus for low income at scc:
 $51: $7,075
@@ -351,21 +358,21 @@ $150: $ 6,997
   #q <- low_demand_tax(p, scc) + demand(p, high.income.lm)
  # return(q)}
 
-PS_fun_w_tax <- function(p, scc){
-  ps <- ((10 - tax(scc))* Q_demand_agg_tax(p, scc)) * 0.5
+PS_fun_w_tax <- function(p, scc, q){
+  ps <- (Supply_fun(q)* Q_demand_agg_tax(p, scc)) * 0.5
   return(ps)
 }
 
-PS_51 <- PS_fun_w_tax(p = 10, scc = 51)/100 # = $23,019 this isn't right....i feel like it should be the same as the previous PS_tax
+PS_tax_51 <- (0.5* Q_demand_agg_tax(p = 10, scc = 51) * Supply_fun(q = Q_demand_agg_tax( p = 10, scc = 51)))/100
  
-PS_fun_w_tax(p = 10, scc = 150)/100
+PS_fun_w_tax(p = 10, scc = 150, q = Q_demand_agg_tax(p = 10, scc = 150))/100
 ```
 producer surplus at scc:
-$51: $23,019
-$75: $18,143
-$100: $15,414
-$125: $12,770
-$150: $10,209
+$51: $25,081
+$75: $24,276
+$100: $23,451
+$125: $22,640
+$150: $21,844
 
 
 6. Suppose the “high” income group has access to expensive home solar generation. This lowers
@@ -376,6 +383,27 @@ demand:
 (c) What value of the electricity tax makes the total environmental damage the same as the
 damage when solar panels are available to the high income group?
 ```{r}
-# c: p = 
+#new demand curve for high income with solar
+demand_h_solar <- function(q, model){
+  p <- (q*model$coefficients[2]) + .5*model$coefficients[1]
+  p <- ifelse(q<0, 0, q)
+  return(q)
+}
+
+high_demand_solar <- function(p){
+  q <- (p - .5*model$coefficient[1])/high.income.lm$coefficients[2]
+  return(q)
+}
+###confused!!!
+
+Q_demand_agg_solar <- function(p){
+  q <- high_demand_tax(p) + demand(p, low.income.lm)
+  return(q)
+}
+
+# use the supply function to input the new q_star and find the new supply intercept p value
+Supply_fun(q = q_star_solar)
+
+
 ```
 
