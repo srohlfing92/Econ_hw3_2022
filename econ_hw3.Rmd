@@ -5,64 +5,50 @@ date: "5/2/2022"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include=FALSE, message=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 library(janitor)
 library(here)
-
+options(scipen = 99)
 ```
 
-## Read in the data
+## Question 1
+
+- 1 kwh = 0.85 lbs CO2 emitted
+- $51/metric ton CO2 emitted = SCC
+- $51/metric ton of CO2 emitted = $51/2204.62 lbs of CO2 emitted = $0.023/lbs
+- $0.023/lbs * 0.85 lbs CO2 emitted = $0.01955
+- *MEC per kwh of electricty is $0.01955*
+
 ```{r}
+## read in data
 hw3_data <- read.csv(here("data", "HW3_data.csv")) %>% 
   clean_names() 
 ```
 
-## Tidy data w/ pivot
-```{r}
-elec_longer <- pivot_longer(data =hw3_data,
-                            cols = q_low_kwh:q_high_kwh,
-                            names_to = "income_group",
-                            values_to = "quantity_kwh")
-```
+## Question 2
 
-## Graph Price v. Income Group per kilowatt hour
-```{r}
+Demand for Low Income Group
+- P1 = (m1)*(Q1) + (b1)
+- P1 = (-0.00011)(Q1) + 23.37097
+- Q1 = (P1 - b1)/(m1)
+- Q1 = (P1 - 23.4)/(-0.00011)
 
-ggplot(data = elec_longer, aes(y = price_cents, x = quantity_kwh)) +
-  geom_point() +
-  geom_smooth(method =lm, se = FALSE) +
-  facet_wrap( ~income_group)+
-  labs(x = "kwH",
-       y = "Price of kwH",
-       title = "Demand for low and high income households")
-
-```
-
-```{r}
-#hw3_data %>% 
-#hw3_data$q_agg_sum = q_low_kwh + q_high_kwh ## did this not work?
-
-hw3_data$price_dollars <- hw3_data$price_cents/100
-```
-
-##
 ```{r}
 ## line equation for low income group
 low.income.lm <-lm(price_cents ~ q_low_kwh, data = hw3_data)
 slope.low <- low.income.lm$coefficient[2]
 intercept.low <- low.income.lm$coefficient[1]
-vector_range <- seq(0, 160000, length.out = 19)
+vector_range <- seq(0, 800000, length.out = 19)
 hw3_data$low_demand = slope.low*(vector_range) + intercept.low
-
-ggplot(data = hw3_data, aes(y = price_cents, x = low_demand)) +
-  geom_line() +
-  labs(x = "kwH",
-       y = "Price of kwH",
-       title = "Demand for low income")
-
 ```
+
+Demand for High Income Group
+- P2 = (m2)*(hw3_data$high_demand) + (b2)
+- P2 = (-0.035)(Q2) + 31.606856
+- Q2 = (P2 - b2)/(m2)
+- Q2 = (P2 - 31.6)/(-0.035)
 
 ```{r}
 ## line equation for high income group
@@ -70,35 +56,37 @@ high.income.lm <-lm(price_cents ~ q_high_kwh, data = hw3_data)
 slope.high <- high.income.lm$coefficient[2]
 intercept.high <- high.income.lm$coefficient[1]
 hw3_data$high_demand = slope.high*(vector_range) + intercept.high
-
-ggplot(data = hw3_data, aes(y = price_cents, x = high_demand)) +
-  geom_line()+
-  labs(x = "kwH",
-       y = "Price of kwH",
-       title = "Demand for high income")
 ```
 
 ```{r}
-## slope for the demand line
+## function for a demand line (can be used for high or low income)
 demand <- function(p, model){
   q <- (p - model$coefficients[1])/model$coefficients[2]
   q <- ifelse(q<0, 0, q)
   return(q)
 }
-
-
 ```
 
-```{r}
-demand_ex <- demand(p= 10, model = low.income.lm) #(example: to find what demand function will output at price = 2)
-```
-
-## Demand aggregate curve: 
+Aggregate Demand
+- Horizontally sum demand for low income and high income groups
+- determine slope of the line (magg) using "rise over run" = -0.000035336
+- determine the intercept (bagg) = 28.96543
+- Pagg = -0.000035336*Qagg + 28.96543
 ```{r}
 demand_agg <- function(p){
   q <- demand(p, low.income.lm) + demand(p, high.income.lm)
   return(q)
 }
+
+demand_agg(p = 10) ## 536719.5
+demand_agg(p = 2) ## 763114.9
+
+## slope_demand <- (10-2)/(536719.5-763114.9) #-0.000035336
+
+## p = mQ + B
+## 2 -(-0.000035336)*763114.9 = B = 28.96543
+
+## Graphing Aggregate Demand Curve
 price = seq(0, 30, length.out = 100)
 Qagg <- map(price, demand_agg) %>% unlist()
 df<- tibble(Qagg = Qagg, price = price)
@@ -107,12 +95,21 @@ ggplot(data = df, aes(y = price, x = Qagg)) +
   geom_line()+
   labs(x = "kwH",
        y = "Price of kwH",
-       title = "Aggregate Demand")
+       title = "Price per kwH for Aggregate Monthly Demand")
+  
 ```
 
+Generating Supply Curve using Aggregate Demand Curve
+- Current electricity price is $0.10
+- Supply curve will intersect aggregate demand curve at the current electricity price
+- When Pagg = 10, Qagg = 536,719.5
+- The marginal cost (MPC) of producing a kWh of electricity is linear and has a price-intercept of 0. Thus Pmpc = 0 when Qmpc = 0
+- MPC_slope = (0 - 10)/(0 - 536719.5) = 0.00001863171
+- Pmpc = MPC_slope*Q
+- Pmpc = 0.00001863171*Q
 
 ```{r}
-q_star_agg <- demand_agg(p=10) # q_star_agg = 536,719 kwH
+q_star_agg <- demand_agg(p=10) # q_star_agg = 536,719.5 kwH
 p_star_before_tax <- 10 #10 cents is p star
 ```
 
@@ -120,7 +117,7 @@ p_star_before_tax <- 10 #10 cents is p star
 # find slope for supply curve
 mpc_slope = p_star_before_tax/q_star_agg # slope of supply curve = 1.86e-5
 
-df$q_random <- seq(0, 80000, length.out = 100)
+df$q_random <- seq(0, 30, length.out = 100)
 
 hw3_data$q_kwh_sum <- hw3_data$q_low_kwh + hw3_data$q_high_kwh
 
@@ -131,7 +128,10 @@ df$supply_lm <- mpc_slope * df$q_random
 #df$mpc_prices = mpc_slope*(Qagg) 
 
 ggplot(data = df, aes(y = price, x = supply_lm)) +
-  geom_point()
+  geom_point() +
+  labs(x = "kwH",
+       y = "Price of kwH",
+       title = "Supply Curve for Price per kwh by kwh")
 
 ```
 
