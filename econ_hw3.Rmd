@@ -1,6 +1,6 @@
 ---
 title: "Econ_hw_3"
-author: "Sarah Rohlfing"
+author: "Sarah Rohlfing, Meghna Rao, Alessandra Puig-Santana"
 date: "5/2/2022"
 output: html_document
 ---
@@ -99,7 +99,7 @@ ggplot(data = df, aes(y = price, x = Qagg)) +
   
 ```
 
-Generating Supply Curve using Aggregate Demand Curve
+Supply Curve
 - Current electricity price is $0.10
 - Supply curve will intersect aggregate demand curve at the current electricity price
 - When Pagg = 10, Qagg = 536,719.5
@@ -135,24 +135,8 @@ ggplot(data = df, aes(y = price, x = supply_lm)) +
 
 ```
 
-Question 1: One kWh of electricity emits 0.85 pounds of CO2. Assuming that the interim SCC correctly reflects the total social cost of one metric ton of CO2, what is the marginal externality cost per kwH of electricity?
-
-```{r}
-# $51/1 metric ton * 0.000453592 metric tons/1 lb = $.0231/lb *.85 lb/kwh = $0.01966/kwh
-# $ 0.10 + $0.01966 = $0.12/kwh (marginal external cost/kwh)
-
-tax <- function(scc){
-  t <- scc * .000453592 * 0.85 * 100
-  return(t)
-}
-
-tax(scc = 51)
-
-mec_per_kwh <- 12 # <- marginal external cost in dollars
-```
-
-Question 2: What is the aggregate monthly demand curve for electricity? What is the supply curve for electricity? What is the “benefit” to consumers under the status quo? What is the “benefit” to producers under the status quo? What is the environmental cost under the status quo?
-
+Consumer Surplus under the Status Quo
+- 
 ```{r}
 CS <- function(p, model){
   q <- demand(p, model)
